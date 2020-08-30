@@ -1,5 +1,7 @@
 {
     "cSpell.words": [
-        "moyai"
-    ]
+        "neoo","mikro"
+    ],
+    "prettier.configPath": ".prettierrc",
+    "prettier.endOfLine": "auto"
 }
