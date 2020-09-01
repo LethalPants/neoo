@@ -1,7 +1,8 @@
-import { MikroORM } from '@mikro-orm/core';
+import { MikroORM, Dictionary, IPrimaryKey } from '@mikro-orm/core';
 import { Post } from './entities/Post';
 import path from 'path';
 import { __prod__ } from './constants';
+import { NotFoundException } from './errors/NotFoundException';
 
 if (!__prod__) {
 	require('dotenv').config();
