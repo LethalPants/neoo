@@ -1,8 +1,8 @@
-import { MikroORM, Dictionary, IPrimaryKey } from '@mikro-orm/core';
+import { MikroORM } from '@mikro-orm/core';
 import { Post } from './entities/Post';
 import path from 'path';
 import { __prod__ } from './constants';
-import { NotFoundException } from './errors/NotFoundException';
+import { User } from './entities/User';
 
 if (!__prod__) {
 	require('dotenv').config();
@@ -14,7 +14,7 @@ export default {
 	password: process.env.DB_PASSWORD,
 	type: 'postgresql',
 	debug: !__prod__,
-	entities: [Post],
+	entities: [Post, User],
 	migrations: {
 		path: path.join(__dirname, './migrations'),
 		pattern: /^[\w-]+\d+\.[tj]s$/,
