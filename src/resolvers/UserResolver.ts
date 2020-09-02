@@ -37,6 +37,8 @@ class LoginUserInput {
 
 @ObjectType()
 class FieldError {
+	@Field(() => String, { nullable: true })
+	field?: string;
 	@Field()
 	message: string;
 }
@@ -52,20 +54,55 @@ class UserErrorResponse {
 
 @Resolver()
 export class UserResolver {
-	@Mutation(() => User)
+	@Mutation(() => UserErrorResponse)
 	async register(
 		@Arg('option') options: RegisterUserInput,
 		@Ctx() { em }: MyContext
-	) {
+	): Promise<UserErrorResponse> {
+		if (options.username.length <= 3) {
+			return {
+				errors: [
+					{
+						message:
+							'username must be at least 3 characters in length.',
+						field: 'username',
+					},
+				],
+			};
+		}
+		if (options.password.length <= 8) {
+			return {
+				errors: [
+					{
+						message:
+							'password must be at least 8 characters in length.',
+						field: 'password',
+					},
+				],
+			};
+		}
 		const hashed = await argon.hash(options.password);
 		const user = em.create(User, {
 			username: options.username,
 			email: options.email,
 			password: hashed,
 		});
-
-		await em.persistAndFlush(user);
-		return user;
+		try {
+			await em.persistAndFlush(user);
+		} catch (error) {
+			if (error.code === '23505') {
+				const key = error.detail.match(new RegExp('(email|username)'));
+				return {
+					errors: [
+						{
+							message: `${key[0]} already taken`,
+							field: key[0],
+						},
+					],
+				};
+			}
+		}
+		return { user };
 	}
 
 	@Mutation(() => UserErrorResponse)
