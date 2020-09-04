@@ -6,6 +6,7 @@ import {
 	Arg,
 	Ctx,
 	ObjectType,
+	Query,
 } from 'type-graphql';
 import { MyContext } from 'src/types';
 import { User } from '../entities/User';
@@ -52,14 +53,24 @@ class UserErrorResponse {
 	user?: User;
 }
 
-@Resolver()
+@Resolver(User)
 export class UserResolver {
+	@Query(() => User, { nullable: true }) me(@Ctx() { req, em }: MyContext) {
+		// no user
+		if (!req.session.user) {
+			return null;
+		}
+		const user = em.findOne(User, { email: req.session.user });
+
+		return user;
+	}
+
 	@Mutation(() => UserErrorResponse)
 	async register(
 		@Arg('option') options: RegisterUserInput,
-		@Ctx() { em }: MyContext
+		@Ctx() { em, req }: MyContext
 	): Promise<UserErrorResponse> {
-		if (options.username.length <= 3) {
+		if (options.username.length < 3) {
 			return {
 				errors: [
 					{
@@ -70,7 +81,7 @@ export class UserResolver {
 				],
 			};
 		}
-		if (options.password.length <= 8) {
+		if (options.password.length < 8) {
 			return {
 				errors: [
 					{
@@ -88,27 +99,28 @@ export class UserResolver {
 			password: hashed,
 		});
 		try {
-			await em.persistAndFlush(user);
+			await em.persist(user, true);
 		} catch (error) {
 			if (error.code === '23505') {
 				const key = error.detail.match(new RegExp('(email|username)'));
 				return {
 					errors: [
 						{
-							message: `${key[0]} already taken`,
+							message: `user with that ${key[0]} exists`,
 							field: key[0],
 						},
 					],
 				};
 			}
 		}
+		req.session.user = user.email;
 		return { user };
 	}
 
 	@Mutation(() => UserErrorResponse)
 	async login(
 		@Arg('option') options: LoginUserInput,
-		@Ctx() { em }: MyContext
+		@Ctx() { em, req }: MyContext
 	): Promise<UserErrorResponse> {
 		const user = options.username
 			? await em.findOne(User, { username: options.username })
@@ -116,6 +128,8 @@ export class UserResolver {
 		if (user) {
 			const valid = await argon.verify(user.password, options.password);
 			if (valid) {
+				req.session!.user = user.email;
+
 				return {
 					user,
 				};

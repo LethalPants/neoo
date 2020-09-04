@@ -23,7 +23,7 @@ export class PostResolver {
 		@Ctx() { em }: MyContext
 	): Promise<Post> {
 		const post = em.create(Post, { title });
-		await em.persistAndFlush(post);
+		await em.persist(post, true);
 		return post;
 	}
 
@@ -38,7 +38,7 @@ export class PostResolver {
 			return null;
 		}
 		post.title = title;
-		await em.persistAndFlush(post);
+		await em.persist(post, true);
 		return post;
 	}
 
