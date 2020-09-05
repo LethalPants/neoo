@@ -74,8 +74,7 @@ export class UserResolver {
 			return {
 				errors: [
 					{
-						message:
-							'username must be at least 3 characters in length.',
+						message: 'username must be at least 3 characters in length.',
 						field: 'username',
 					},
 				],
@@ -85,8 +84,7 @@ export class UserResolver {
 			return {
 				errors: [
 					{
-						message:
-							'password must be at least 8 characters in length.',
+						message: 'password must be at least 8 characters in length.',
 						field: 'password',
 					},
 				],
@@ -101,7 +99,7 @@ export class UserResolver {
 		try {
 			await em.persist(user, true);
 		} catch (error) {
-			if (error.code === '23505') {
+			if (error.detail.includes('already exists')) {
 				const key = error.detail.match(new RegExp('(email|username)'));
 				return {
 					errors: [

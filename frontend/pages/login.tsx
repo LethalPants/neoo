@@ -1,21 +1,28 @@
 import React from 'react';
-import { Form, Input, Button, Layout, Row, Col, Typography } from 'antd';
+import { Formik } from 'formik';
+import {
+	SubmitButton,
+	Input,
+	Checkbox,
+	ResetButton,
+	FormikDebug,
+	Form,
+	FormItem,
+} from 'formik-antd';
+import { Row, Col, Typography, Alert } from 'antd';
+import * as Yup from 'yup';
+import { useLoginMutation } from '../src/generated/graphql';
+import { useRouter } from 'next/router';
 
-const Login: React.FC = () => {
-	const layout = {
-		labelCol: { span: 6 },
-		wrapperCol: { span: 16 },
-	};
-	const [loading, setLoading] = React.useState(false);
-	const toggleLoading = () => setLoading(!loading);
-	const onFinish = (values) => {
-		console.log('Success:', values);
-	};
+const RegisterSchema = Yup.object().shape({
+	username: Yup.string().required('Username is required'),
+	password: Yup.string().required('Password is required'),
+});
 
-	const onFinishFailed = (errorInfo) => {
-		console.log('Failed:', errorInfo);
-	};
-
+const Login = () => {
+	const [, login] = useLoginMutation();
+	const router = useRouter();
+	const [error, setError] = React.useState('');
 	return (
 		<Row
 			align="middle"
@@ -24,40 +31,56 @@ const Login: React.FC = () => {
 			gutter={[8, 16]}
 		>
 			<Col span={12} offset={2}>
-				<Typography.Title level={3}>Login</Typography.Title>
-				<Form
-					{...layout}
-					name="basic"
-					layout="vertical"
-					size="large"
-					initialValues={{ remember: true }}
-					onFinish={onFinish}
-					onFinishFailed={onFinishFailed}
+				<Typography.Title level={3}>Create an account</Typography.Title>
+				{error !== '' && (
+					<Row>
+						<Col span={16}>
+							<Alert type="error" message={error} banner />
+						</Col>
+					</Row>
+				)}
+				<Formik
+					initialValues={{
+						username: '',
+						email: '',
+						password: '',
+					}}
+					onSubmit={async (values, { setErrors }) => {
+						const res = await login(values);
+						if (res.data?.login.errors) {
+							setError(res.data.login.errors[0].message);
+						} else if (res.data?.login.user) {
+							router.push('/');
+						}
+					}}
+					validationSchema={RegisterSchema}
 				>
-					<Form.Item
-						label="Username"
-						name="username"
-						rules={[{ required: true, message: 'Please enter your username' }]}
-					>
-						<Input />
-					</Form.Item>
+					{({ isSubmitting }) => (
+						<Form
+							labelCol={{ xs: 6 }}
+							wrapperCol={{ xs: 16 }}
+							name="basic"
+							layout="vertical"
+							size="large"
+						>
+							<FormItem name="username" label="Username" required={true}>
+								<Input name="username" placeholder="Username" />
+							</FormItem>
+							<FormItem name="password" label="Password" required={true}>
+								<Input.Password name="password" placeholder="Password" />
+							</FormItem>
 
-					<Form.Item
-						label="Password"
-						name="password"
-						rules={[{ required: true, message: 'Please enter your password' }]}
-					>
-						<Input.Password />
-					</Form.Item>
-
-					<Form.Item>
-						<Button type="primary" htmlType="submit" loading={loading}>
-							Submit
-						</Button>
-					</Form.Item>
-				</Form>
+							<SubmitButton
+								loading={isSubmitting}
+								style={{ marginBottom: '10px' }}
+							>
+								Login
+							</SubmitButton>
+						</Form>
+					)}
+				</Formik>
 				<Typography.Text>Don't have an account? </Typography.Text>
-				<Typography.Link href="/register">Register now</Typography.Link>{' '}
+				<Typography.Link href="/login">Register</Typography.Link>{' '}
 			</Col>
 		</Row>
 	);
