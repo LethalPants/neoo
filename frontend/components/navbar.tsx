@@ -4,11 +4,14 @@ import NextLink from 'next/link';
 import { UserOutlined } from '@ant-design/icons';
 
 import { useMeQuery, useLogoutMutation } from '../src/generated/graphql';
+import { isServer } from '../src/utils/isServer';
 interface themeProps {}
 
 export const Navbar: React.FC<themeProps> = ({}) => {
 	const [{ fetching: isLoggingOut }, logout] = useLogoutMutation();
-	const [{ data, fetching }] = useMeQuery();
+	const [{ data, fetching }] = useMeQuery({
+		pause: isServer(),
+	});
 	let body = null;
 	if (!fetching) {
 		if (!data?.me) {
