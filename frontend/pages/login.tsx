@@ -1,18 +1,11 @@
 import React from 'react';
 import { Formik } from 'formik';
-import {
-	SubmitButton,
-	Input,
-	Checkbox,
-	ResetButton,
-	FormikDebug,
-	Form,
-	FormItem,
-} from 'formik-antd';
+import { SubmitButton, Input, Form, FormItem } from 'formik-antd';
 import { Row, Col, Typography, Alert } from 'antd';
 import * as Yup from 'yup';
 import { useLoginMutation } from '../src/generated/graphql';
 import { useRouter } from 'next/router';
+import NextLink from 'next/link';
 
 const RegisterSchema = Yup.object().shape({
 	username: Yup.string().required('Username is required'),
@@ -80,7 +73,7 @@ const Login = () => {
 					)}
 				</Formik>
 				<Typography.Text>Don't have an account? </Typography.Text>
-				<Typography.Link href="/login">Register</Typography.Link>{' '}
+				<NextLink href="/register">Register</NextLink>
 			</Col>
 		</Row>
 	);

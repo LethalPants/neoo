@@ -3,8 +3,7 @@ mutation Register($username: String!, $email: String!, $password: String!) {
 		option: { username: $username, email: $email, password: $password }
 	) {
 		user {
-			username
-			email
+			...UserFragment
 		}
 		errors {
 			field

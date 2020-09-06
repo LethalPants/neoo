@@ -1,19 +1,12 @@
 import React from 'react';
 import { Formik } from 'formik';
-import {
-	SubmitButton,
-	Input,
-	Checkbox,
-	ResetButton,
-	FormikDebug,
-	Form,
-	FormItem,
-} from 'formik-antd';
+import { SubmitButton, Input, Form, FormItem } from 'formik-antd';
 import { Row, Col, Typography, Space } from 'antd';
 import * as Yup from 'yup';
 import { useRegisterMutation } from '../src/generated/graphql';
 import { useRouter } from 'next/router';
 import { toErrorMap } from '../src/utils/toErrorMap';
+import NextLink from 'next/link';
 
 const RegisterSchema = Yup.object().shape({
 	username: Yup.string()
@@ -83,7 +76,7 @@ const Register = () => {
 					)}
 				</Formik>
 				<Typography.Text>Have an account? </Typography.Text>
-				<Typography.Link href="/login">Login </Typography.Link>{' '}
+				<NextLink href="/login">Login</NextLink>
 			</Col>
 		</Row>
 	);

@@ -6,9 +6,9 @@
 
 .align-left {
 	display: flex;
-	justify-content: end;
+	justify-content: flex-end;
 }
-a.menu-button {
+.menu-button {
 	display: block !important;
 	margin: auto 20px !important;
 }

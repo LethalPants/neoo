@@ -11,6 +11,7 @@ import session from 'express-session';
 import connectRedis from 'connect-redis';
 import { __prod__ } from './constants';
 import cors from 'cors';
+
 const main = async () => {
 	const orm = await MikroORM.init(mikroOrmConfig);
 	await orm.getMigrator().up();
@@ -18,19 +19,22 @@ const main = async () => {
 
 	const RedisStore = connectRedis(session);
 	const redisClient = redis.createClient();
+
 	app.use(
 		cors({
-			origin: 'http://localhost:3000',
+			origin: process.env.CORS_ORIGIN,
+			methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
 			credentials: true,
 		})
 	);
+
 	app.use(
 		session({
 			store: new RedisStore({
 				client: redisClient,
 				disableTouch: true,
 			}),
-			name: 'qid',
+			name: process.env.COOKIE_NAME,
 			secret: 'faihjigfsg3rt8guhsjfasjdkgjoaisd',
 			resave: false,
 			saveUninitialized: false,
@@ -52,7 +56,13 @@ const main = async () => {
 		context: ({ req, res }) => ({ em: orm.em, req, res }),
 	});
 
-	apolloServer.applyMiddleware({ app });
+	apolloServer.applyMiddleware({
+		app,
+		cors: {
+			origin: process.env.CORS_ORIGIN,
+			credentials: true,
+		},
+	});
 
 	const PORT = process.env.PORT;
 	app.listen(PORT, () => {

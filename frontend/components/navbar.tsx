@@ -1,21 +1,47 @@
 import React from 'react';
-import { Menu, Typography, Button } from 'antd';
+import { Menu, Button } from 'antd';
+import NextLink from 'next/link';
+import { UserOutlined } from '@ant-design/icons';
 
+import { useMeQuery, useLogoutMutation } from '../src/generated/graphql';
 interface themeProps {}
 
 export const Navbar: React.FC<themeProps> = ({}) => {
+	const [{ fetching: isLoggingOut }, logout] = useLogoutMutation();
+	const [{ data, fetching }] = useMeQuery();
+	let body = null;
+	if (!fetching) {
+		if (!data?.me) {
+			body = (
+				<>
+					<NextLink href="/register">Register</NextLink>
+
+					<Button type="primary" className="menu-button">
+						<NextLink href="/login"> Login</NextLink>
+					</Button>
+				</>
+			);
+		} else {
+			body = (
+				<Menu.SubMenu
+					key="sub1"
+					icon={<UserOutlined />}
+					title={`Welcome ${data.me.username}`}
+				>
+					<Menu.Item key="1" onClick={() => logout()} disabled={isLoggingOut}>
+						Logout
+					</Menu.Item>
+				</Menu.SubMenu>
+			);
+		}
+	}
+
 	return (
 		<Menu
 			mode="horizontal"
 			style={{ display: 'flex', justifyContent: 'flex-end' }}
 		>
-			<Menu.Item key="register">
-				<Typography.Link href="/register">Register</Typography.Link>
-			</Menu.Item>
-
-			<Button href="/login" className="menu-button" type="primary">
-				Login
-			</Button>
+			{body}
 		</Menu>
 	);
 };
