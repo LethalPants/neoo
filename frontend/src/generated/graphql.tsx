@@ -73,7 +73,8 @@ export type MutationRegisterArgs = {
 
 
 export type MutationLoginArgs = {
-  option: LoginUserInput;
+  password: Scalars['String'];
+  inputUser: Scalars['String'];
 };
 
 export type UserErrorResponse = {
@@ -94,19 +95,13 @@ export type RegisterUserInput = {
   email: Scalars['String'];
 };
 
-export type LoginUserInput = {
-  username?: Maybe<Scalars['String']>;
-  password: Scalars['String'];
-  email?: Maybe<Scalars['String']>;
-};
-
 export type UserFragmentFragment = (
   { __typename?: 'User' }
   & Pick<User, 'username' | 'email'>
 );
 
 export type LoginMutationVariables = Exact<{
-  username: Scalars['String'];
+  inputUser: Scalars['String'];
   password: Scalars['String'];
 }>;
 
@@ -183,8 +178,8 @@ export const UserFragmentFragmentDoc = gql`
 }
     `;
 export const LoginDocument = gql`
-    mutation Login($username: String!, $password: String!) {
-  login(option: {username: $username, password: $password}) {
+    mutation Login($inputUser: String!, $password: String!) {
+  login(inputUser: $inputUser, password: $password) {
     errors {
       field
       message

@@ -36,8 +36,7 @@ const Login = () => {
 				)}
 				<Formik
 					initialValues={{
-						username: '',
-						email: '',
+						inputUser: '',
 						password: '',
 					}}
 					onSubmit={async (values, { setErrors }) => {
@@ -52,17 +51,27 @@ const Login = () => {
 				>
 					{({ isSubmitting }) => (
 						<Form
-							labelCol={{ xs: 6 }}
+							labelCol={{ xs: 8 }}
 							wrapperCol={{ xs: 16 }}
 							name="basic"
 							layout="vertical"
 							size="large"
 						>
-							<FormItem name="username" label="Username" required={true}>
-								<Input name="username" placeholder="Username" />
+							<FormItem
+								name="inputUser"
+								label="Username or Email"
+								required={true}
+							>
+								<Input
+									name="inputUser"
+									placeholder="Enter your username or email"
+								/>
 							</FormItem>
 							<FormItem name="password" label="Password" required={true}>
-								<Input.Password name="password" placeholder="Password" />
+								<Input.Password
+									name="password"
+									placeholder="Enter your password"
+								/>
 							</FormItem>
 
 							<SubmitButton

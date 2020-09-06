@@ -11,7 +11,7 @@ import { MyContext } from 'src/types';
 import { User } from '../entities/User';
 import argon from 'argon2';
 import { RegisterUserInput } from './RegisterUserInput';
-import { validateRegister } from 'src/utils/ValidateRegister';
+import { validateRegister } from '../utils/ValidateRegister';
 
 @ObjectType()
 class FieldError {
