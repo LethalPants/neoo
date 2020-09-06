@@ -1,7 +1,6 @@
 import {
 	Resolver,
 	Mutation,
-	InputType,
 	Field,
 	Arg,
 	Ctx,
@@ -11,30 +10,8 @@ import {
 import { MyContext } from 'src/types';
 import { User } from '../entities/User';
 import argon from 'argon2';
-
-@InputType()
-class RegisterUserInput {
-	@Field()
-	username: string;
-
-	@Field()
-	password: string;
-
-	@Field()
-	email: string;
-}
-
-@InputType()
-class LoginUserInput {
-	@Field(() => String, { nullable: true })
-	username: string;
-
-	@Field()
-	password: string;
-
-	@Field(() => String, { nullable: true })
-	email: string;
-}
+import { RegisterUserInput } from './RegisterUserInput';
+import { validateRegister } from 'src/utils/ValidateRegister';
 
 @ObjectType()
 class FieldError {
@@ -70,26 +47,13 @@ export class UserResolver {
 		@Arg('option') options: RegisterUserInput,
 		@Ctx() { em, req }: MyContext
 	): Promise<UserErrorResponse> {
-		if (options.username.length < 3) {
+		const errors = validateRegister(options);
+		if (errors.length > 0) {
 			return {
-				errors: [
-					{
-						message: 'username must be at least 3 characters in length.',
-						field: 'username',
-					},
-				],
+				errors,
 			};
 		}
-		if (options.password.length < 8) {
-			return {
-				errors: [
-					{
-						message: 'password must be at least 8 characters in length.',
-						field: 'password',
-					},
-				],
-			};
-		}
+
 		const hashed = await argon.hash(options.password);
 		const user = em.create(User, {
 			username: options.username,
@@ -117,14 +81,19 @@ export class UserResolver {
 
 	@Mutation(() => UserErrorResponse)
 	async login(
-		@Arg('option') options: LoginUserInput,
+		@Arg('inputUser') inputUser: string,
+		@Arg('password') password: string,
 		@Ctx() { em, req }: MyContext
 	): Promise<UserErrorResponse> {
-		const user = options.username
-			? await em.findOne(User, { username: options.username })
-			: await em.findOne(User, { email: options.email });
+		const re = /\S+@\S+\.\S+/;
+
+		const user = await em.findOne(
+			User,
+			re.test(inputUser) ? { email: inputUser } : { username: inputUser }
+		);
+
 		if (user) {
-			const valid = await argon.verify(user.password, options.password);
+			const valid = await argon.verify(user.password, password);
 			if (valid) {
 				req.session!.user = user.email;
 
