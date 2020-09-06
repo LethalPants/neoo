@@ -6,6 +6,8 @@ import * as Yup from 'yup';
 import { useLoginMutation } from '../src/generated/graphql';
 import { useRouter } from 'next/router';
 import NextLink from 'next/link';
+import { withUrqlClient } from 'next-urql';
+import { createUrqlClient } from '../src/utils/createUrqlClient';
 
 const RegisterSchema = Yup.object().shape({
 	username: Yup.string().required('Username is required'),
@@ -79,4 +81,4 @@ const Login = () => {
 	);
 };
 
-export default Login;
+export default withUrqlClient(createUrqlClient)(Login);

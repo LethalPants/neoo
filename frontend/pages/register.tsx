@@ -7,6 +7,8 @@ import { useRegisterMutation } from '../src/generated/graphql';
 import { useRouter } from 'next/router';
 import { toErrorMap } from '../src/utils/toErrorMap';
 import NextLink from 'next/link';
+import { withUrqlClient } from 'next-urql';
+import { createUrqlClient } from '../src/utils/createUrqlClient';
 
 const RegisterSchema = Yup.object().shape({
 	username: Yup.string()
@@ -82,4 +84,4 @@ const Register = () => {
 	);
 };
 
-export default Register;
+export default withUrqlClient(createUrqlClient)(Register);
