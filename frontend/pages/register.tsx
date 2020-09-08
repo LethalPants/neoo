@@ -65,7 +65,11 @@ const Register = () => {
 								<Input name="email" placeholder="Email" />
 							</FormItem>
 							<FormItem name="password" label="Password" required={true}>
-								<Input.Password name="password" placeholder="Password" />
+								<Input.Password
+									name="password"
+									placeholder="Password"
+									autoComplete="off"
+								/>
 							</FormItem>
 
 							<SubmitButton
