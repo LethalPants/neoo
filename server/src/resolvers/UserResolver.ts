@@ -12,6 +12,7 @@ import { User } from '../entities/User';
 import argon from 'argon2';
 import { RegisterUserInput } from './RegisterUserInput';
 import { validateRegister } from '../utils/ValidateRegister';
+import { getConnection } from 'typeorm';
 
 @ObjectType()
 class FieldError {
@@ -32,20 +33,19 @@ class UserErrorResponse {
 
 @Resolver(User)
 export class UserResolver {
-	@Query(() => User, { nullable: true }) me(@Ctx() { req, em }: MyContext) {
+	@Query(() => User, { nullable: true })
+	me(@Ctx() { req }: MyContext) {
 		// no user
 		if (!req.session.user) {
 			return null;
 		}
-		const user = em.findOne(User, { email: req.session.user });
-
-		return user;
+		return User.findOne({ where: { email: req.session.user } });
 	}
 
 	@Mutation(() => UserErrorResponse)
 	async register(
 		@Arg('option') options: RegisterUserInput,
-		@Ctx() { em, req }: MyContext
+		@Ctx() { req }: MyContext
 	): Promise<UserErrorResponse> {
 		const errors = validateRegister(options);
 		if (errors.length > 0) {
@@ -55,15 +55,16 @@ export class UserResolver {
 		}
 
 		const hashed = await argon.hash(options.password);
-		const user = em.create(User, {
-			username: options.username,
-			email: options.email,
-			password: hashed,
-		});
+		let user: any;
 		try {
-			await em.persist(user, true);
+			const result = await User.create({
+				username: options.username,
+				email: options.email,
+				password: hashed,
+			}).save();
+			user = result;
 		} catch (error) {
-			if (error.detail.includes('already exists')) {
+			if (error.code === '23505') {
 				const key = error.detail.match(new RegExp('(email|username)'));
 				return {
 					errors: [
@@ -74,8 +75,10 @@ export class UserResolver {
 					],
 				};
 			}
+			console.log(error);
+			return { errors: [error] };
 		}
-		req.session.user = user.email;
+		req.session.user = user!.email;
 		return { user };
 	}
 
@@ -83,13 +86,14 @@ export class UserResolver {
 	async login(
 		@Arg('inputUser') inputUser: string,
 		@Arg('password') password: string,
-		@Ctx() { em, req }: MyContext
+		@Ctx() { req }: MyContext
 	): Promise<UserErrorResponse> {
 		const re = /\S+@\S+\.\S+/;
 
-		const user = await em.findOne(
-			User,
-			re.test(inputUser) ? { email: inputUser } : { username: inputUser }
+		const user = await User.findOne(
+			re.test(inputUser)
+				? { where: { email: inputUser } }
+				: { where: { username: inputUser } }
 		);
 
 		if (user) {

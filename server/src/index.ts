@@ -1,6 +1,4 @@
 import 'reflect-metadata';
-import { MikroORM } from '@mikro-orm/core';
-import mikroOrmConfig from './mikro-orm.config';
 import express from 'express';
 import { ApolloServer } from 'apollo-server-express';
 import { buildSchema } from 'type-graphql';
@@ -11,10 +9,21 @@ import session from 'express-session';
 import connectRedis from 'connect-redis';
 import { __prod__ } from './constants';
 import cors from 'cors';
-
+import { createConnection } from 'typeorm';
 const main = async () => {
-	const orm = await MikroORM.init(mikroOrmConfig);
-	await orm.getMigrator().up();
+	if (!__prod__) {
+		require('dotenv').config();
+	}
+
+	const conn = await createConnection({
+		type: 'postgres',
+		database: process.env.DB_NAME,
+		username: process.env.DB_USER,
+		password: process.env.DB_PASSWORD,
+		logging: true,
+		synchronize: true,
+		entities: [],
+	});
 	const app = express();
 
 	const RedisStore = connectRedis(session);
@@ -53,7 +62,7 @@ const main = async () => {
 			validate: false,
 		}),
 
-		context: ({ req, res }) => ({ em: orm.em, req, res }),
+		context: ({ req, res }) => ({ req, res }),
 	});
 
 	apolloServer.applyMiddleware({
