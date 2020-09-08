@@ -1,7 +1,7 @@
 import React from 'react';
 import { Formik } from 'formik';
 import { SubmitButton, Input, Form, FormItem } from 'formik-antd';
-import { Row, Col, Typography, Alert } from 'antd';
+import { Row, Col, Typography, Alert, Button } from 'antd';
 import * as Yup from 'yup';
 import { useLoginMutation } from '../src/generated/graphql';
 import { useRouter } from 'next/router';
@@ -10,7 +10,7 @@ import { withUrqlClient } from 'next-urql';
 import { createUrqlClient } from '../src/utils/createUrqlClient';
 
 const RegisterSchema = Yup.object().shape({
-	username: Yup.string().required('Username is required'),
+	inputUser: Yup.string().required('Username is required'),
 	password: Yup.string().required('Password is required'),
 });
 
@@ -30,7 +30,12 @@ const Login = () => {
 				{error !== '' && (
 					<Row>
 						<Col span={16}>
-							<Alert type="error" message={error} banner />
+							<Alert
+								type="error"
+								message={error}
+								closable
+								onClose={() => setError('')}
+							/>
 						</Col>
 					</Row>
 				)}
@@ -65,12 +70,15 @@ const Login = () => {
 								<Input
 									name="inputUser"
 									placeholder="Enter your username or email"
+									onChange={() => setError('')}
 								/>
 							</FormItem>
 							<FormItem name="password" label="Password" required={true}>
 								<Input.Password
+									autoComplete="off"
 									name="password"
 									placeholder="Enter your password"
+									onChange={() => setError('')}
 								/>
 							</FormItem>
 
