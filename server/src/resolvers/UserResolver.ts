@@ -77,7 +77,7 @@ export class UserResolver {
 			console.log(error);
 			return { errors: [error] };
 		}
-		req.session.user = user!.email;
+		req.session.user = user!.id;
 		return { user };
 	}
 
@@ -98,7 +98,7 @@ export class UserResolver {
 		if (user) {
 			const valid = await argon.verify(user.password, password);
 			if (valid) {
-				req.session!.user = user.email;
+				req.session!.user = user.id;
 
 				return {
 					user,
