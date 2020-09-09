@@ -5,7 +5,7 @@ import { Post } from '../entities/Post';
 export class PostResolver {
 	@Query(() => [Post])
 	posts(): Promise<Post[]> {
-		return Post.find(Post, {});
+		return Post.find();
 	}
 
 	@Query(() => Post, { nullable: true })

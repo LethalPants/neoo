@@ -10,6 +10,8 @@ import connectRedis from 'connect-redis';
 import { __prod__ } from './constants';
 import cors from 'cors';
 import { createConnection } from 'typeorm';
+import { User } from './entities/User';
+import { Post } from './entities/Post';
 const main = async () => {
 	if (!__prod__) {
 		require('dotenv').config();
@@ -22,7 +24,7 @@ const main = async () => {
 		password: process.env.DB_PASSWORD,
 		logging: true,
 		synchronize: true,
-		entities: [],
+		entities: [User, Post],
 	});
 	const app = express();
 

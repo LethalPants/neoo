@@ -12,7 +12,6 @@ import { User } from '../entities/User';
 import argon from 'argon2';
 import { RegisterUserInput } from './RegisterUserInput';
 import { validateRegister } from '../utils/ValidateRegister';
-import { getConnection } from 'typeorm';
 
 @ObjectType()
 class FieldError {
