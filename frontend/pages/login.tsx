@@ -9,7 +9,7 @@ import NextLink from 'next/link';
 import { withUrqlClient } from 'next-urql';
 import { createUrqlClient } from '../src/utils/createUrqlClient';
 
-const RegisterSchema = Yup.object().shape({
+const LoginSchema = Yup.object().shape({
 	inputUser: Yup.string().required('Username is required'),
 	password: Yup.string().required('Password is required'),
 });
@@ -52,7 +52,7 @@ const Login = () => {
 							router.push('/');
 						}
 					}}
-					validationSchema={RegisterSchema}
+					validationSchema={LoginSchema}
 				>
 					{({ isSubmitting }) => (
 						<Form
