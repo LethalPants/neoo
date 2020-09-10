@@ -3,5 +3,6 @@ query Posts {
 		title
 		id
 		createdAt
+		body
 	}
 }
