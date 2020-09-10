@@ -49,7 +49,11 @@ const Login = () => {
 						if (res.data?.login.errors) {
 							setError(res.data.login.errors[0].message);
 						} else if (res.data?.login.user) {
-							router.push('/');
+							if (typeof router.query.next === 'string') {
+								router.push(router.query.next);
+							} else {
+								router.push('/');
+							}
 						}
 					}}
 					validationSchema={LoginSchema}
