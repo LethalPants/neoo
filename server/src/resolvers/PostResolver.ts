@@ -27,7 +27,7 @@ export class PostResolver {
 	@UseMiddleware(isAuth)
 	async createPost(
 		@Arg('title', () => String) title: string,
-		@Arg('body', () => String) body: string,
+		@Arg('body', () => String, { nullable: true }) body: string,
 		@Ctx() { req }: MyContext
 	): Promise<Post> {
 		const post = Post.create({ title, body, user: req.session.user }).save();

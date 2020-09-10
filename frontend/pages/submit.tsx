@@ -14,10 +14,9 @@ import {
 import * as Yup from 'yup';
 
 import { useRouter } from 'next/router';
-import NextLink from 'next/link';
 import { withUrqlClient } from 'next-urql';
 import { createUrqlClient } from '../src/utils/createUrqlClient';
-import ButtonGroup from 'antd/lib/button/button-group';
+import { useCreatePostMutation } from '../src/generated/graphql';
 
 const newPostSchema = Yup.object().shape({
 	title: Yup.string().required('Title is required'),
@@ -25,7 +24,7 @@ const newPostSchema = Yup.object().shape({
 });
 
 const Submit = () => {
-	// const [, Submit] = useSubmitMutation();
+	const [, Submit] = useCreatePostMutation();
 	const router = useRouter();
 	const [error, setError] = React.useState('');
 	return (
@@ -38,30 +37,16 @@ const Submit = () => {
 				<Typography.Title level={3}>Create a Post</Typography.Title>
 				<Divider />
 
-				{error !== '' && (
-					<Row>
-						<Col span={16}>
-							<Alert
-								type="error"
-								message={error}
-								closable
-								onClose={() => setError('')}
-							/>
-						</Col>
-					</Row>
-				)}
 				<Formik
 					initialValues={{
 						title: '',
 						body: '',
 					}}
 					onSubmit={async (values, { setErrors }) => {
-						// const res = await Submit(values);
-						// if (res.data?.Submit.errors) {
-						// 	setError(res.data.Submit.errors[0].message);
-						// } else if (res.data?.Submit.user) {
-						// 	router.push('/');
-						// }
+						const res = await Submit(values);
+						if (res.data?.createPost) {
+							router.push('/');
+						}
 						console.log(values);
 					}}
 					validationSchema={newPostSchema}

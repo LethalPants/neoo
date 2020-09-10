@@ -27,13 +27,16 @@ export type QueryPostArgs = {
 export type Post = {
   __typename?: 'Post';
   id: Scalars['Int'];
+  title: Scalars['String'];
+  body: Scalars['String'];
+  points: Scalars['Float'];
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
-  title: Scalars['String'];
 };
 
 export type User = {
   __typename?: 'User';
+  id: Scalars['Float'];
   username: Scalars['String'];
   email: Scalars['String'];
   createdAt: Scalars['String'];
@@ -52,11 +55,13 @@ export type Mutation = {
 
 
 export type MutationCreatePostArgs = {
+  body?: Maybe<Scalars['String']>;
   title: Scalars['String'];
 };
 
 
 export type MutationUpdatePostArgs = {
+  body: Scalars['String'];
   title: Scalars['String'];
   id: Scalars['Float'];
 };
@@ -98,6 +103,20 @@ export type RegisterUserInput = {
 export type UserFragmentFragment = (
   { __typename?: 'User' }
   & Pick<User, 'username' | 'email'>
+);
+
+export type CreatePostMutationVariables = Exact<{
+  title: Scalars['String'];
+  body?: Maybe<Scalars['String']>;
+}>;
+
+
+export type CreatePostMutation = (
+  { __typename?: 'Mutation' }
+  & { createPost?: Maybe<(
+    { __typename?: 'Post' }
+    & Pick<Post, 'title' | 'body'>
+  )> }
 );
 
 export type LoginMutationVariables = Exact<{
@@ -177,6 +196,18 @@ export const UserFragmentFragmentDoc = gql`
   email
 }
     `;
+export const CreatePostDocument = gql`
+    mutation CreatePost($title: String!, $body: String) {
+  createPost(title: $title, body: $body) {
+    title
+    body
+  }
+}
+    `;
+
+export function useCreatePostMutation() {
+  return Urql.useMutation<CreatePostMutation, CreatePostMutationVariables>(CreatePostDocument);
+};
 export const LoginDocument = gql`
     mutation Login($inputUser: String!, $password: String!) {
   login(inputUser: $inputUser, password: $password) {
