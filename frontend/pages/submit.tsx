@@ -26,7 +26,6 @@ const newPostSchema = Yup.object().shape({
 const Submit = () => {
 	const [, Submit] = useCreatePostMutation();
 	const router = useRouter();
-	const [error, setError] = React.useState('');
 	return (
 		<Row
 			align="middle"
@@ -47,7 +46,6 @@ const Submit = () => {
 						if (res.data?.createPost) {
 							router.push('/');
 						}
-						console.log(values);
 					}}
 					validationSchema={newPostSchema}
 				>
@@ -55,11 +53,7 @@ const Submit = () => {
 						<Card>
 							<Form name="basic" layout="vertical" size="large">
 								<FormItem name="title" label="Title" required={true}>
-									<Input
-										name="title"
-										placeholder="Title"
-										onChange={() => setError('')}
-									/>
+									<Input name="title" placeholder="Title" />
 								</FormItem>
 								<Card
 									type="inner"
@@ -73,7 +67,6 @@ const Submit = () => {
 											name="body"
 											cols={6}
 											rows={7}
-											onChange={() => setError('')}
 											placeholder="Write your post here"
 										/>
 									</FormItem>
