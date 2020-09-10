@@ -2,17 +2,25 @@ import { Navbar } from '../components/navbar';
 import { withUrqlClient } from 'next-urql';
 import { createUrqlClient } from '../src/utils/createUrqlClient';
 import { usePostsQuery } from '../src/generated/graphql';
-import { Spin, List, Avatar } from 'antd';
+import { Spin, List, Avatar, Row, Col } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 
 function Home() {
 	const [{ data }] = usePostsQuery();
-	const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
+	const antIcon = <LoadingOutlined style={{ fontSize: 36 }} spin />;
 	return (
 		<div>
 			<Navbar />
 			{!data ? (
-				<Spin indicator={antIcon} />
+				<Row
+					align="middle"
+					justify="center"
+					style={{ minHeight: '100vh', margin: 'auto' }}
+				>
+					<Col>
+						<Spin indicator={antIcon} />
+					</Col>
+				</Row>
 			) : (
 				<List
 					itemLayout="horizontal"
