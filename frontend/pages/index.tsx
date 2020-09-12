@@ -1,9 +1,9 @@
-import { Navbar } from '../components/navbar';
-import { withUrqlClient } from 'next-urql';
-import { createUrqlClient } from '../src/utils/createUrqlClient';
-import { usePostsQuery } from '../src/generated/graphql';
-import { Spin, List, Avatar, Row, Col } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
+import { Avatar, Col, List, Row, Spin } from 'antd';
+import { withUrqlClient } from 'next-urql';
+import { Navbar } from '../components/navbar';
+import { usePostsQuery } from '../src/generated/graphql';
+import { createUrqlClient } from '../src/utils/createUrqlClient';
 
 function Home() {
 	const [{ data }] = usePostsQuery();

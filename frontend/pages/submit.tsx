@@ -1,15 +1,13 @@
-import React, { useEffect } from 'react';
+import { Card, Col, Divider, Row, Space, Typography } from 'antd';
 import { Formik } from 'formik';
-import { SubmitButton, Input, Form, FormItem, ResetButton } from 'formik-antd';
-import { Row, Col, Typography, Space, Card, Divider } from 'antd';
-import * as Yup from 'yup';
-
-import { useRouter } from 'next/router';
+import { Form, FormItem, Input, ResetButton, SubmitButton } from 'formik-antd';
 import { withUrqlClient } from 'next-urql';
-import { createUrqlClient } from '../src/utils/createUrqlClient';
-
-import { useCreatePostMutation, useMeQuery } from '../src/generated/graphql';
+import { useRouter } from 'next/router';
+import React from 'react';
+import * as Yup from 'yup';
 import { Navbar } from '../components/navbar';
+import { useCreatePostMutation } from '../src/generated/graphql';
+import { createUrqlClient } from '../src/utils/createUrqlClient';
 import { useIsAuth } from '../src/utils/useIsAuth';
 
 const newPostSchema = Yup.object().shape({

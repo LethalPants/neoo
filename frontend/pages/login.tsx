@@ -1,12 +1,12 @@
-import React from 'react';
+import { Alert, Col, Row, Typography } from 'antd';
 import { Formik } from 'formik';
-import { SubmitButton, Input, Form, FormItem } from 'formik-antd';
-import { Row, Col, Typography, Alert, Button } from 'antd';
+import { Form, FormItem, Input, SubmitButton } from 'formik-antd';
+import { withUrqlClient } from 'next-urql';
+import NextLink from 'next/link';
+import { useRouter } from 'next/router';
+import React from 'react';
 import * as Yup from 'yup';
 import { useLoginMutation } from '../src/generated/graphql';
-import { useRouter } from 'next/router';
-import NextLink from 'next/link';
-import { withUrqlClient } from 'next-urql';
 import { createUrqlClient } from '../src/utils/createUrqlClient';
 
 const LoginSchema = Yup.object().shape({
@@ -26,7 +26,7 @@ const Login = () => {
 			gutter={[8, 16]}
 		>
 			<Col span={12} offset={2}>
-				<Typography.Title level={3}>Create an account</Typography.Title>
+				<Typography.Title level={3}>Login</Typography.Title>
 				{error !== '' && (
 					<Row>
 						<Col span={16}>

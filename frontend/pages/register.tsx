@@ -1,14 +1,14 @@
-import React from 'react';
+import { Col, Row, Typography } from 'antd';
 import { Formik } from 'formik';
-import { SubmitButton, Input, Form, FormItem } from 'formik-antd';
-import { Row, Col, Typography, Space } from 'antd';
+import { Form, FormItem, Input, SubmitButton } from 'formik-antd';
+import { withUrqlClient } from 'next-urql';
+import NextLink from 'next/link';
+import { useRouter } from 'next/router';
+import React from 'react';
 import * as Yup from 'yup';
 import { useRegisterMutation } from '../src/generated/graphql';
-import { useRouter } from 'next/router';
-import { toErrorMap } from '../src/utils/toErrorMap';
-import NextLink from 'next/link';
-import { withUrqlClient } from 'next-urql';
 import { createUrqlClient } from '../src/utils/createUrqlClient';
+import { toErrorMap } from '../src/utils/toErrorMap';
 
 const RegisterSchema = Yup.object().shape({
 	username: Yup.string()

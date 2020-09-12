@@ -1,10 +1,9 @@
-import React from 'react';
-import { Menu, Button } from 'antd';
+import { Button, Menu } from 'antd';
 import NextLink from 'next/link';
-import { UserOutlined } from '@ant-design/icons';
-
-import { useMeQuery, useLogoutMutation } from '../src/generated/graphql';
+import React from 'react';
+import { useLogoutMutation, useMeQuery } from '../src/generated/graphql';
 import { isServer } from '../src/utils/isServer';
+
 interface themeProps {}
 
 export const Navbar: React.FC<themeProps> = ({}) => {
