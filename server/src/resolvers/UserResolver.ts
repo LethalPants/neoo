@@ -35,10 +35,11 @@ export class UserResolver {
 	@Query(() => User, { nullable: true })
 	me(@Ctx() { req }: MyContext) {
 		// no user
+		console.log(req.session.user);
 		if (!req.session.user) {
 			return null;
 		}
-		return User.findOne({ where: { email: req.session.user } });
+		return User.findOne({ where: { id: req.session.user } });
 	}
 
 	@Mutation(() => UserErrorResponse)

@@ -8,7 +8,7 @@ import { isServer } from '../src/utils/isServer';
 interface themeProps {}
 
 export const Navbar: React.FC<themeProps> = ({}) => {
-	const [{ fetching: isLoggingOut }, logout] = useLogoutMutation();
+	const [, logout] = useLogoutMutation();
 	const [{ data, fetching }] = useMeQuery({
 		pause: isServer(),
 	});
@@ -26,15 +26,13 @@ export const Navbar: React.FC<themeProps> = ({}) => {
 			);
 		} else {
 			body = (
-				<Menu.SubMenu
-					key="sub1"
-					icon={<UserOutlined />}
-					title={`Welcome ${data.me.username}`}
+				<Button
+					type="primary"
+					style={{ margin: '10px 20px' }}
+					onClick={() => logout()}
 				>
-					<Menu.Item key="1" onClick={() => logout()} disabled={isLoggingOut}>
-						Logout
-					</Menu.Item>
-				</Menu.SubMenu>
+					Logout
+				</Button>
 			);
 		}
 	}
