@@ -1,6 +1,8 @@
 import { LoadingOutlined } from '@ant-design/icons';
-import { Avatar, Col, List, Row, Spin } from 'antd';
+import { Avatar, Card, Col, List, Row, Spin } from 'antd';
 import { withUrqlClient } from 'next-urql';
+import React from 'react';
+import { CreatePost } from '../components/CreatePost';
 import { Navbar } from '../components/navbar';
 import { usePostsQuery } from '../src/generated/graphql';
 import { createUrqlClient } from '../src/utils/createUrqlClient';
@@ -22,30 +24,35 @@ function Home() {
 					</Col>
 				</Row>
 			) : (
-				<List
-					itemLayout="horizontal"
-					dataSource={data.posts}
-					renderItem={(post) => (
-						<List.Item>
-							<List.Item.Meta
-								title={<span style={{ marginTop: 20 }}>{post.title}</span>}
-								avatar={
-									<Avatar
-										style={{
-											backgroundColor: '#ed641a',
-											verticalAlign: 'middle',
-										}}
-										size="large"
-										gap={7}
-									>
-										{'U'}
-									</Avatar>
-								}
-							/>
-							{post.body}
-						</List.Item>
-					)}
-				/>
+				<Row>
+					<Col xs={{ span: 22, offset: 1 }} lg={{ span: 12, offset: 6 }}>
+						<CreatePost />
+						<List
+							itemLayout="horizontal"
+							dataSource={data.posts}
+							renderItem={(post) => (
+								<Card style={{ margin: '10px 0' }}>
+									<Card.Meta
+										avatar={
+											<Avatar
+												style={{
+													backgroundColor: '#ed641a',
+													verticalAlign: 'middle',
+												}}
+												size="large"
+												gap={7}
+											>
+												{'U'}
+											</Avatar>
+										}
+										title={<span style={{ marginTop: 20 }}>{post.title}</span>}
+										description={post.body}
+									/>
+								</Card>
+							)}
+						/>
+					</Col>
+				</Row>
 			)}
 		</div>
 	);
