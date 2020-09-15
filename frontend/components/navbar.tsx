@@ -16,30 +16,36 @@ export const Navbar: React.FC<themeProps> = ({}) => {
 		if (!data?.me) {
 			body = (
 				<>
-					<NextLink href="/register">Register</NextLink>
-
-					<Button type="primary" className="menu-button">
-						<NextLink href="/login"> Login</NextLink>
-					</Button>
+					<li>
+						<NextLink href='/register'>Register</NextLink>
+					</li>
+					<li>
+						<Button type='primary' className='menu-button'>
+							<NextLink href='/login'> Login</NextLink>
+						</Button>
+					</li>
 				</>
 			);
 		} else {
 			body = (
-				<Button
-					type="primary"
-					style={{ margin: '10px 20px' }}
-					onClick={() => logout()}
-				>
-					Logout
-				</Button>
+				<Menu.Item key='logout' className='no-eff-hover'>
+					<Button
+						type='primary'
+						style={{ margin: '10px 20px' }}
+						onClick={() => logout()}
+					>
+						Logout
+					</Button>
+				</Menu.Item>
 			);
 		}
 	}
 
 	return (
 		<Menu
-			mode="horizontal"
+			mode='horizontal'
 			style={{ display: 'flex', justifyContent: 'flex-end' }}
+			key='nav'
 		>
 			{body}
 		</Menu>

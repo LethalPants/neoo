@@ -9,6 +9,10 @@
 	justify-content: flex-end;
 }
 .menu-button {
-	display: block !important;
+	display: inline-block !important;
 	margin: auto 20px !important;
+}
+.no-eff-hover {
+	border-bottom: none !important;
+	cursor: default !important;
 }
