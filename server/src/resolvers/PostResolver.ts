@@ -8,11 +8,21 @@ import {
 	UseMiddleware,
 	FieldResolver,
 	Root,
+	Field,
+	ObjectType,
 } from 'type-graphql';
 import { Post } from '../entities/Post';
 import { MyContext } from '../types';
 import { isAuth } from '../middleware/isAuth';
 import { getConnection } from 'typeorm';
+
+@ObjectType()
+class PaginatedPosts {
+	@Field(() => [Post])
+	posts: Post[];
+	@Field()
+	hasMore: boolean;
+}
 
 @Resolver(Post)
 export class PostResolver {
@@ -21,22 +31,34 @@ export class PostResolver {
 		return root.body ? root.body.slice(0, 100) : '';
 	}
 
-	@Query(() => [Post])
-	posts(
+	@Query(() => PaginatedPosts)
+	async posts(
 		@Arg('limit', () => Int) limit: number,
 		@Arg('cursor', () => String, { nullable: true }) cursor: string | null
-	): Promise<Post[]> {
+	): Promise<PaginatedPosts> {
 		const realLimit = Math.min(50, limit);
-		const qb = getConnection()
-			.getRepository(Post)
-			.createQueryBuilder('p')
-			.orderBy('"createdAt"', 'DESC')
-			.take(realLimit);
+		const rl = realLimit + 1;
+
+		const replacements: any[] = [rl];
 
 		if (cursor) {
-			qb.where('"createdAt" < :cursor', { cursor: new Date(parseInt(cursor)) });
+			replacements.push(new Date(parseInt(cursor)));
 		}
-		return qb.getMany();
+
+		const posts = await getConnection().query(
+			`
+			select p.*
+			from post p
+			${cursor ? `where p."createdAt" < $2` : ''}
+			order by p."createdAt" DESC
+			limit $1
+		`,
+			replacements
+		);
+		return {
+			posts: posts.slice(0, realLimit),
+			hasMore: posts.length === rl,
+		};
 	}
 
 	@Query(() => Post, { nullable: true })

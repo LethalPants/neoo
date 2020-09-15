@@ -1,23 +1,40 @@
 import { LoadingOutlined } from '@ant-design/icons';
-import { Avatar, Card, Col, List, Row, Spin } from 'antd';
+import { Avatar, Button, Card, Col, List, Result, Row, Spin } from 'antd';
 import { withUrqlClient } from 'next-urql';
-import React from 'react';
+import React, { useState } from 'react';
 import { CreatePost } from '../components/CreatePost';
 import { Navbar } from '../components/navbar';
 import { usePostsQuery } from '../src/generated/graphql';
 import { createUrqlClient } from '../src/utils/createUrqlClient';
 
 function Home() {
-	const [{ data }] = usePostsQuery({
-		variables: {
-			limit: 10,
-		},
+	const [variables, setVariables] = useState({
+		limit: 10,
+		cursor: null as string | null,
 	});
+	const [{ data, fetching }] = usePostsQuery({
+		variables,
+	});
+
+	if (!fetching && !data) {
+		return (
+			<Result
+				status="error"
+				title="An error while fetching the data."
+				extra={
+					<Button type="primary" key="console">
+						Open Console
+					</Button>
+				}
+			/>
+		);
+	}
+
 	const antIcon = <LoadingOutlined style={{ fontSize: 36 }} spin />;
 	return (
 		<div>
 			<Navbar />
-			{!data ? (
+			{!data && fetching ? (
 				<Row
 					align="middle"
 					justify="center"
@@ -33,7 +50,7 @@ function Home() {
 						<CreatePost />
 						<List
 							itemLayout="horizontal"
-							dataSource={data.posts}
+							dataSource={data!.posts.posts}
 							renderItem={(post) => (
 								<Card style={{ margin: '10px 0' }}>
 									<Card.Meta
@@ -55,6 +72,23 @@ function Home() {
 								</Card>
 							)}
 						/>
+
+						{data && data.posts.hasMore ? (
+							<Button
+								type="primary"
+								size="large"
+								style={{ margin: 'auto' }}
+								onClick={() =>
+									setVariables({
+										limit: variables.limit,
+										cursor: data!.posts.posts[data!.posts.posts.length - 1]
+											.createdAt,
+									})
+								}
+							>
+								Load more
+							</Button>
+						) : null}
 					</Col>
 				</Row>
 			)}
