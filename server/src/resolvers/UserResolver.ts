@@ -1,17 +1,19 @@
+import argon from 'argon2';
+import { MyContext } from 'src/types';
 import {
-	Resolver,
-	Mutation,
-	Field,
 	Arg,
 	Ctx,
+	Field,
+	FieldResolver,
+	Mutation,
 	ObjectType,
 	Query,
+	Resolver,
+	Root
 } from 'type-graphql';
-import { MyContext } from 'src/types';
 import { User } from '../entities/User';
-import argon from 'argon2';
-import { RegisterUserInput } from './RegisterUserInput';
 import { validateRegister } from '../utils/ValidateRegister';
+import { RegisterUserInput } from './RegisterUserInput';
 
 @ObjectType()
 class FieldError {
@@ -32,6 +34,16 @@ class UserErrorResponse {
 
 @Resolver(User)
 export class UserResolver {
+	@FieldResolver(() => String)
+	email(@Root() user: User, @Ctx() { req }: MyContext) {
+		// this is the current user and its ok to show them their own email
+		if (req.session.userId === user.id) {
+			return user.email;
+		}
+		// current user wants to see someone elses email
+		return '';
+	}
+
 	@Query(() => User, { nullable: true })
 	me(@Ctx() { req }: MyContext) {
 		// no user
@@ -50,7 +62,7 @@ export class UserResolver {
 		const errors = validateRegister(options);
 		if (errors.length > 0) {
 			return {
-				errors,
+				errors
 			};
 		}
 
@@ -60,7 +72,7 @@ export class UserResolver {
 			const result = await User.create({
 				username: options.username,
 				email: options.email,
-				password: hashed,
+				password: hashed
 			}).save();
 			user = result;
 		} catch (error) {
@@ -70,9 +82,9 @@ export class UserResolver {
 					errors: [
 						{
 							message: `user with that ${key[0]} exists`,
-							field: key[0],
-						},
-					],
+							field: key[0]
+						}
+					]
 				};
 			}
 			console.log(error);
@@ -102,16 +114,16 @@ export class UserResolver {
 				req.session!.user = user.id;
 
 				return {
-					user,
+					user
 				};
 			}
 		}
 		return {
 			errors: [
 				{
-					message: 'Invalid username password combination',
-				},
-			],
+					message: 'Invalid username password combination'
+				}
+			]
 		};
 	}
 

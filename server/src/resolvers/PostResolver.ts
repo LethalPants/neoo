@@ -1,20 +1,20 @@
 import {
-	Query,
-	Resolver,
 	Arg,
+	Ctx,
+	Field,
+	FieldResolver,
 	Int,
 	Mutation,
-	Ctx,
-	UseMiddleware,
-	FieldResolver,
-	Root,
-	Field,
 	ObjectType,
+	Query,
+	Resolver,
+	Root,
+	UseMiddleware
 } from 'type-graphql';
-import { Post } from '../entities/Post';
-import { MyContext } from '../types';
-import { isAuth } from '../middleware/isAuth';
 import { getConnection } from 'typeorm';
+import { Post } from '../entities/Post';
+import { isAuth } from '../middleware/isAuth';
+import { MyContext } from '../types';
 
 @ObjectType()
 class PaginatedPosts {
@@ -47,17 +47,25 @@ export class PostResolver {
 
 		const posts = await getConnection().query(
 			`
-			select p.*
+			select p.*,
+			json_build_object(
+				'username', u.username
+				'email', u.email
+			) creator
 			from post p
+			inner join public.user u on u.id = p."creatorId"
 			${cursor ? `where p."createdAt" < $2` : ''}
 			order by p."createdAt" DESC
 			limit $1
 		`,
 			replacements
 		);
+
+		console.log(posts);
+
 		return {
 			posts: posts.slice(0, realLimit),
-			hasMore: posts.length === rl,
+			hasMore: posts.length === rl
 		};
 	}
 
@@ -73,7 +81,7 @@ export class PostResolver {
 		@Arg('body', () => String, { nullable: true }) body: string,
 		@Ctx() { req }: MyContext
 	): Promise<Post> {
-		const post = Post.create({ title, body, user: req.session.user }).save();
+		const post = Post.create({ title, body, creator: req.session.user }).save();
 		return post;
 	}
 

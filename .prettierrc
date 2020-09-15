@@ -3,8 +3,9 @@
 	"useTabs": true,
 	"semi": true,
 	"singleQuote": true,
-	"trailingComma": "es5",
+	"trailingComma": "none",
 	"bracketSpacing": true,
 	"arrowParens": "always",
-	"proseWrap": "always"
+	"proseWrap": "always",
+	"jsxSingleQuote": true
 }

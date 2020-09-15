@@ -19,10 +19,10 @@ function Home() {
 	if (!fetching && !data) {
 		return (
 			<Result
-				status="error"
-				title="An error while fetching the data."
+				status='error'
+				title='An error while fetching the data.'
 				extra={
-					<Button type="primary" key="console">
+					<Button type='primary' key='console'>
 						Open Console
 					</Button>
 				}
@@ -36,8 +36,8 @@ function Home() {
 			<Navbar />
 			{!data && fetching ? (
 				<Row
-					align="middle"
-					justify="center"
+					align='middle'
+					justify='center'
 					style={{ minHeight: '100vh', margin: 'auto' }}
 				>
 					<Col>
@@ -49,7 +49,7 @@ function Home() {
 					<Col xs={{ span: 22, offset: 1 }} lg={{ span: 12, offset: 6 }}>
 						<CreatePost />
 						<List
-							itemLayout="horizontal"
+							itemLayout='horizontal'
 							dataSource={data!.posts.posts}
 							renderItem={(post) => (
 								<Card style={{ margin: '10px 0' }}>
@@ -60,10 +60,10 @@ function Home() {
 													backgroundColor: '#ed641a',
 													verticalAlign: 'middle',
 												}}
-												size="large"
+												size='large'
 												gap={7}
 											>
-												{'U'}
+												{post.creator.username[0]}
 											</Avatar>
 										}
 										title={<span style={{ marginTop: 20 }}>{post.title}</span>}
@@ -75,8 +75,8 @@ function Home() {
 
 						{data && data.posts.hasMore ? (
 							<Button
-								type="primary"
-								size="large"
+								type='primary'
+								size='large'
 								style={{ margin: 'auto' }}
 								onClick={() =>
 									setVariables({
