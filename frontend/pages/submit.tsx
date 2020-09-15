@@ -28,7 +28,7 @@ const Submit = () => {
 				justify="center"
 				style={{ minHeight: '80vh', marginRight: 0 }}
 			>
-				<Col span={8}>
+				<Col span={14} lg={{ span: 10 }}>
 					<Typography.Title level={3}>Create a Post</Typography.Title>
 					<Divider />
 
