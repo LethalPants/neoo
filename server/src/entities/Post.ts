@@ -21,9 +21,9 @@ export class Post extends BaseEntity {
 	@Column({ type: 'text' })
 	title!: string;
 
-	@Field()
-	@Column({ type: 'text' })
-	body!: string;
+	@Field(() => String, { nullable: true })
+	@Column({ type: 'text', nullable: true })
+	body: string;
 
 	@Field()
 	@Column({ type: 'int', default: 0 })

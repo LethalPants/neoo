@@ -8,7 +8,11 @@ import { usePostsQuery } from '../src/generated/graphql';
 import { createUrqlClient } from '../src/utils/createUrqlClient';
 
 function Home() {
-	const [{ data }] = usePostsQuery();
+	const [{ data }] = usePostsQuery({
+		variables: {
+			limit: 10,
+		},
+	});
 	const antIcon = <LoadingOutlined style={{ fontSize: 36 }} spin />;
 	return (
 		<div>
@@ -46,7 +50,7 @@ function Home() {
 											</Avatar>
 										}
 										title={<span style={{ marginTop: 20 }}>{post.title}</span>}
-										description={post.body}
+										description={`${post.textSnippet}...`}
 									/>
 								</Card>
 							)}
