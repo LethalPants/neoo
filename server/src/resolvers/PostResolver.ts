@@ -31,6 +31,19 @@ export class PostResolver {
 		return root.body ? root.body.slice(0, 100) : '';
 	}
 
+	@Mutation(() => Boolean)
+	@UseMiddleware(isAuth)
+	vote(
+		@Arg('postId', () => Int) postId: number,
+		@Arg('value', () => Int) value: number,
+		@Ctx() { req }: MyContext
+	) {
+		const isUpdoot = value !== -1;
+		const upVal = isUpdoot ? 1 : -1;
+		const { user } = req.session;
+		// TODO : ADD UPDOOT TRANSACTION
+	}
+
 	@Query(() => PaginatedPosts)
 	async posts(
 		@Arg('limit', () => Int) limit: number,
@@ -60,8 +73,6 @@ export class PostResolver {
 		`,
 			replacements
 		);
-
-		console.log(posts);
 
 		return {
 			posts: posts.slice(0, realLimit),
