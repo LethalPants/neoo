@@ -10,10 +10,10 @@ import { createUrqlClient } from '../src/utils/createUrqlClient';
 function Home() {
 	const [variables, setVariables] = useState({
 		limit: 10,
-		cursor: null as string | null,
+		cursor: null as string | null
 	});
 	const [{ data, fetching }] = usePostsQuery({
-		variables,
+		variables
 	});
 
 	if (!fetching && !data) {
@@ -58,7 +58,7 @@ function Home() {
 											<Avatar
 												style={{
 													backgroundColor: '#ed641a',
-													verticalAlign: 'middle',
+													verticalAlign: 'middle'
 												}}
 												size='large'
 												gap={7}
@@ -67,7 +67,9 @@ function Home() {
 											</Avatar>
 										}
 										title={<span style={{ marginTop: 20 }}>{post.title}</span>}
-										description={`${post.textSnippet}...`}
+										description={`${post.textSnippet} ${
+											post.textSnippet ? '...' : ''
+										}`}
 									/>
 								</Card>
 							)}
@@ -82,7 +84,7 @@ function Home() {
 									setVariables({
 										limit: variables.limit,
 										cursor: data!.posts.posts[data!.posts.posts.length - 1]
-											.createdAt,
+											.createdAt
 									})
 								}
 							>
