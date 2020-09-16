@@ -49,7 +49,7 @@ export class PostResolver {
 			`
 			select p.*,
 			json_build_object(
-				'username', u.username
+				'username', u.username,
 				'email', u.email
 			) creator
 			from post p
