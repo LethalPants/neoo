@@ -13,6 +13,7 @@ import { createConnection } from 'typeorm';
 import { User } from './entities/User';
 import { Post } from './entities/Post';
 import path from 'path';
+import { Updoot } from './entities/Updoot';
 const main = async () => {
 	if (!__prod__) {
 		require('dotenv').config();
@@ -26,7 +27,7 @@ const main = async () => {
 		logging: true,
 		synchronize: true,
 		migrations: [path.join(__dirname, 'migrations/*')],
-		entities: [User, Post],
+		entities: [User, Post, Updoot]
 	});
 	await conn.runMigrations();
 	const app = express();
@@ -38,7 +39,7 @@ const main = async () => {
 		cors({
 			origin: process.env.CORS_ORIGIN,
 			methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
-			credentials: true,
+			credentials: true
 		})
 	);
 
@@ -46,7 +47,7 @@ const main = async () => {
 		session({
 			store: new RedisStore({
 				client: redisClient,
-				disableTouch: true,
+				disableTouch: true
 			}),
 			name: process.env.COOKIE_NAME,
 			secret: 'faihjigfsg3rt8guhsjfasjdkgjoaisd',
@@ -56,26 +57,26 @@ const main = async () => {
 				maxAge: 1000 * 60 * 60 * 24 * 365,
 				httpOnly: true,
 				secure: __prod__,
-				sameSite: 'lax',
-			},
+				sameSite: 'lax'
+			}
 		})
 	);
 
 	const apolloServer = new ApolloServer({
 		schema: await buildSchema({
 			resolvers: [PostResolver, UserResolver],
-			validate: false,
+			validate: false
 		}),
 
-		context: ({ req, res }) => ({ req, res }),
+		context: ({ req, res }) => ({ req, res })
 	});
 
 	apolloServer.applyMiddleware({
 		app,
 		cors: {
 			origin: process.env.CORS_ORIGIN,
-			credentials: true,
-		},
+			credentials: true
+		}
 	});
 
 	const PORT = process.env.PORT;

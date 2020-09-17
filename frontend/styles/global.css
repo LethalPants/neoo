@@ -16,3 +16,13 @@
 	border-bottom: none !important;
 	cursor: default !important;
 }
+.updoot-icon,
+.downdoot-icon {
+	cursor: pointer;
+}
+.updoot-icon:hover > svg {
+	fill: #ca1111 !important;
+}
+.downdoot-icon:hover > svg {
+	fill: #155fcf !important;
+}

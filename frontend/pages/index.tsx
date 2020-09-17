@@ -1,11 +1,27 @@
-import { LoadingOutlined } from '@ant-design/icons';
-import { Avatar, Button, Card, Col, List, Result, Row, Spin } from 'antd';
+import {
+	CaretDownOutlined,
+	CaretUpOutlined,
+	LoadingOutlined
+} from '@ant-design/icons';
+import {
+	Avatar,
+	Button,
+	Card,
+	Col,
+	List,
+	Result,
+	Row,
+	Spin,
+	Typography
+} from 'antd';
 import { withUrqlClient } from 'next-urql';
 import React, { useState } from 'react';
 import { CreatePost } from '../components/CreatePost';
 import { Navbar } from '../components/navbar';
 import { usePostsQuery } from '../src/generated/graphql';
 import { createUrqlClient } from '../src/utils/createUrqlClient';
+import formatDistanceToNow from 'date-fns/formatDistanceToNow';
+import { Updoot } from '../components/Updoot';
 
 function Home() {
 	const [variables, setVariables] = useState({
@@ -53,24 +69,52 @@ function Home() {
 							dataSource={data!.posts.posts}
 							renderItem={(post) => (
 								<Card style={{ margin: '10px 0' }}>
-									<Card.Meta
-										avatar={
-											<Avatar
-												style={{
-													backgroundColor: '#ed641a',
-													verticalAlign: 'middle'
-												}}
-												size='large'
-												gap={7}
-											>
-												{post.creator.username[0]}
-											</Avatar>
-										}
-										title={<span style={{ marginTop: 20 }}>{post.title}</span>}
-										description={`${post.textSnippet} ${
-											post.textSnippet ? '...' : ''
-										}`}
-									/>
+									<Row>
+										<Updoot
+											id={post.id}
+											points={post.points}
+											voteStatus={post.voteStatus}
+										/>
+										<Col>
+											<Row>
+												<Avatar
+													style={{
+														backgroundColor: '#ed641a',
+														verticalAlign: 'middle'
+													}}
+													size='small'
+													gap={7}
+												>
+													{post.creator.username[0]}
+												</Avatar>
+
+												<Typography.Paragraph style={{ marginLeft: 10 }}>
+													{' '}
+													{post.creator.username}
+												</Typography.Paragraph>
+											</Row>
+
+											<Card.Meta
+												title={
+													<span style={{ marginTop: 20 }}>{post.title}</span>
+												}
+												description={
+													<>
+														<Typography.Paragraph style={{ marginBottom: 0 }}>
+															{post.textSnippet}
+															{post.textSnippet ? '...' : ''}
+														</Typography.Paragraph>
+
+														<Typography.Text style={{ color: '#6d6d6d' }}>
+															{formatDistanceToNow(
+																parseInt(post.createdAt)
+															).toString()}
+														</Typography.Text>
+													</>
+												}
+											/>
+										</Col>
+									</Row>
 								</Card>
 							)}
 						/>
