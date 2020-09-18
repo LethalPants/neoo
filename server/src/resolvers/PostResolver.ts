@@ -152,7 +152,7 @@ export class PostResolver {
 
 	@Query(() => Post, { nullable: true })
 	post(@Arg('id', () => Int) id: number): Promise<Post | undefined> {
-		return Post.findOne(id);
+		return Post.findOne(id, { relations: ['creator'] });
 	}
 
 	@Mutation(() => Post, { nullable: true })
@@ -162,7 +162,11 @@ export class PostResolver {
 		@Arg('body', () => String, { nullable: true }) body: string,
 		@Ctx() { req }: MyContext
 	): Promise<Post> {
-		const post = Post.create({ title, body, creator: req.session.user }).save();
+		const post = Post.create({
+			title,
+			body,
+			creatorId: req.session.user
+		}).save();
 		return post;
 	}
 
@@ -181,8 +185,12 @@ export class PostResolver {
 	}
 
 	@Mutation(() => Boolean)
-	async deletePost(@Arg('id') id: number): Promise<Boolean> {
-		await Post.delete(id);
+	@UseMiddleware(isAuth)
+	async deletePost(
+		@Arg('id') id: number,
+		@Ctx() { req }: MyContext
+	): Promise<Boolean> {
+		await Post.delete({ id, creatorId: req.session.user });
 		return true;
 	}
 }

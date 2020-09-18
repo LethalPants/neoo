@@ -22,6 +22,7 @@ import { usePostsQuery } from '../src/generated/graphql';
 import { createUrqlClient } from '../src/utils/createUrqlClient';
 import formatDistanceToNow from 'date-fns/formatDistanceToNow';
 import { Updoot } from '../components/Updoot';
+import NextLink from 'next/link';
 
 function Home() {
 	const [variables, setVariables] = useState({
@@ -102,7 +103,13 @@ function Home() {
 													<>
 														<Typography.Paragraph style={{ marginBottom: 0 }}>
 															{post.textSnippet}
-															{post.textSnippet ? '...' : ''}
+															{post.textSnippet ? '... ' : ''}
+															<NextLink
+																href={`/post/[id]`}
+																as={`/post/${post.id}`}
+															>
+																Read more
+															</NextLink>
 														</Typography.Paragraph>
 
 														<Typography.Text style={{ color: '#6d6d6d' }}>
